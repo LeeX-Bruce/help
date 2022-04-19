@@ -1,0 +1,21 @@
+server:
+  port: 8520
+  tomcat:
+    uri-encoding: UTF-8
+
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/help?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: 123456
+  # 配置日期格式化
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss  #时间戳统一转换为指定格式
+    time-zone: GMT+8  # 时区修改为东8区
+
+#关闭驼峰命名转换
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
