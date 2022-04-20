@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.demo.common.Result;
+import com.example.demo.common.ResultEnum;
 import com.example.demo.common.ResultUtil;
 import com.example.demo.entity.SysUser;
 import com.example.demo.service.SysUserService;
@@ -36,22 +39,48 @@ public class SysUserController {
     /**
      * 保存管理员
      */
-    @PostMapping("/save")
+    @PostMapping("/save")   //添加信息用Post
     public Result<?> save(@RequestBody SysUser sysUser){
-        sysUserService.save(sysUser);
+        try {
+            sysUserService.save(sysUser);
 
-        return ResultUtil.success();
+            return ResultUtil.success();
+        }catch (Exception e){
+            return ResultUtil.error(ResultEnum.USER_IS_EXISTS.getCode(), ResultEnum.USER_IS_EXISTS.getMsg());
+        }
+    }
+
+    /**
+     * 更新管理员信息
+     */
+    @PutMapping("/updateSysUser")   //更改信息用Put
+    public Result<?> updateSysUser(@RequestBody SysUser sysUser){
+        try {
+            sysUserService.updateById(sysUser);
+
+            return ResultUtil.success();
+        }catch (Exception e){
+            return ResultUtil.error(ResultEnum.UNKNOWN_ERROR.getCode(), ResultEnum.UNKNOWN_ERROR.getMsg());
+        }
     }
 
     /**
      * 分页获取管理员列表
      */
-    @GetMapping("/getSysUser")
+    @GetMapping("/getSysUser")  //获取信息用Get
     public Result<?> searchSysUser(@RequestParam(defaultValue = "1") Integer pageNum,
                                    @RequestParam(defaultValue = "15") Integer pageSize,
                                    @RequestParam(defaultValue = "") String search){
-        Page<SysUser> page = sysUserService.page(new Page<>(pageNum, pageSize), Wrappers.<SysUser>lambdaQuery().like(SysUser::getUser_name, search));
+        LambdaQueryWrapper<SysUser> wrapper = Wrappers.<SysUser>lambdaQuery();
+        if(StrUtil.isNotBlank(search)){
+            wrapper.like(SysUser::getUser_name,search);
+        }
+        try {
+            Page<SysUser> page = sysUserService.page(new Page<>(pageNum, pageSize), wrapper);
 
-        return ResultUtil.success(page);
+            return ResultUtil.success(page);
+        }catch (Exception e){
+            return ResultUtil.error(ResultEnum.UNKNOWN_ERROR.getCode(), ResultEnum.USER_NOT_EXIST.getMsg());
+        }
     }
 }

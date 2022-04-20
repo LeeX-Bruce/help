@@ -8,8 +8,8 @@
 
     <!--  搜索区  -->
     <div style="margin: 10px 0px">
-      <el-input v-model="search" placeholder="请输入要搜索的管理员名字" style="width: 20%" />
-      <el-button type="primary" style="margin-left: 5px">搜索</el-button>
+      <el-input v-model="search" placeholder="请输入关键字" style="width: 20%" clearable />
+      <el-button type="primary" style="margin-left: 5px" @click="load">搜索</el-button>
     </div>
 
     <!--  数据展示区  -->
@@ -21,11 +21,11 @@
       <el-table-column prop="status" label="状态" />
       <el-table-column prop="create_time" label="创建时间" />
       <el-table-column fixed="right" label="操作">
-        <template #default>
-          <el-button type="default" @click="handleEdit">编辑</el-button>
+        <template #default="scope">
+          <el-button type="default" @click="handleEdit(scope.row)">编辑</el-button>
           <el-popconfirm title="确认删除?">
             <template #reference>
-              <el-button type="danger">删除</el-button>
+              <el-button type="danger" @click="handleDelete">删除</el-button>
             </template>
           </el-popconfirm>
         </template>
@@ -34,8 +34,8 @@
     <div style="margin: 10px 0px">
       <el-pagination
           v-model:currentPage="currentPage"
-          :page-sizes="[10, 15, 20]"
-          :page-size="15"
+          :page-sizes="pageSizes"
+          :page-size="pageSize"
           :background="true"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
@@ -82,43 +82,104 @@ export default {
   name: 'HomeView',
   components: {
   },
+
   data(){
     return{
       form:{
-        user_name:"",
-        password:"",
-        email:"",
-        mobile:"",
-        status:"",
+        user_name: "",
+        password: "",
+        email: "",
+        mobile: "",
+        status: "",
       },
       dialogVisible: false,
       search: '',
       currentPage: 1,
-      total:4,
-      tableData:[]
+      pageSize: 15,
+      pageSizes: [10, 15, 20],
+      total: 0,
+      tableData: []
     }
   },
+
+  created() { //页面加载
+    this.load()
+  },
+
   methods: {
+    load(){
+      request.get("/sys_user/getSysUser", {
+        params: {
+          pageNum: this.currentPage,
+          pageSize: this.pageSize,
+          search: this.search
+        }
+      }).then(res => {
+        // console.log(res)
+        this.total = res.data.total
+        this.tableData = res.data.records
+      })
+    },
     add() {
       this.dialogVisible = true
       this.form = {}
       this.form.status = 1
     },
     save() {
-      // post(后台端口url, 传入的参数)
-      // .then：链式操作，前一步执行完成之后，会把返回的结果放到.then里
-      request.post("/sys_user/save", this.form).then(res => {
-        console.log(res)
-      })
+      if(this.form.user_id) {  //更新
+        request.put("/sys_user/updateSysUser", this.form).then(res => {
+          if(res.code === 200) {
+            this.$message({
+              type: "success",
+              message: "修改成功"
+            })
 
-      this.dialogVisible = false
+            this.load() //刷新表格
+            this.dialogVisible = false  //关闭弹窗
+          }
+          else {
+            this.$message({
+              type: "error",
+              message: res.msg
+            })
+          }
+        })
+      }
+      else {  //新增
+        request.post("/sys_user/save", this.form).then(res => {
+          if(res.code === 200) {
+            this.$message({
+              type: "success",
+              message: "新增成功"
+            })
+
+            this.load() //刷新表格
+            this.dialogVisible = false  //关闭弹窗
+          }
+          else {
+            this.$message({
+              type: "error",
+              message: res.msg
+            })
+          }
+        })
+      }
     },
-    handleEdit() {
+
+    handleEdit(row) {
+      //对row对象进行深拷贝，此时form对象就和表格里对应的row对象隔离开来
+      this.form = JSON.parse(JSON.stringify(row))
+      this.dialogVisible = true
+    },
+
+    handleDelete() {
 
     },
+
     handleSizeChange () {
 
     },
+
     handleCurrentChange() {
 
     }
