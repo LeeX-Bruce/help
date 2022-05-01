@@ -13,6 +13,8 @@ public enum ResultEnum {
     USER_IS_EXISTS(402, "用户已存在"),
     DATA_IS_NULL(403, "数据为空"),
     PASSWORD_IS_WRONG(404, "密码错误"),
+    SAVE_FAILED(405, "保存失败"),
+    UPDATE_FAILED(406, "更新失败"),
     ;
     private Integer code;
     private String msg;

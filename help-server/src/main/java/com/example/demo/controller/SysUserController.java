@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Wrapper;
+import java.util.Date;
 
 /**
  * @author LMH
@@ -42,11 +43,12 @@ public class SysUserController {
     @PostMapping("/save")   //添加信息用Post
     public Result<?> save(@RequestBody SysUser sysUser){
         try {
+            sysUser.setCreate_time(new Date());
             sysUserService.save(sysUser);
 
             return ResultUtil.success();
         }catch (Exception e){
-            return ResultUtil.error(ResultEnum.USER_IS_EXISTS.getCode(), ResultEnum.USER_IS_EXISTS.getMsg());
+            return ResultUtil.error(ResultEnum.SAVE_FAILED.getCode(), ResultEnum.SAVE_FAILED.getMsg());
         }
     }
 
@@ -60,7 +62,7 @@ public class SysUserController {
 
             return ResultUtil.success();
         }catch (Exception e){
-            return ResultUtil.error(ResultEnum.UNKNOWN_ERROR.getCode(), ResultEnum.UNKNOWN_ERROR.getMsg());
+            return ResultUtil.error(ResultEnum.UPDATE_FAILED.getCode(), ResultEnum.UPDATE_FAILED.getMsg());
         }
     }
 
@@ -73,7 +75,7 @@ public class SysUserController {
                                    @RequestParam(defaultValue = "") String search){
         LambdaQueryWrapper<SysUser> wrapper = Wrappers.<SysUser>lambdaQuery();
         if(StrUtil.isNotBlank(search)){
-            wrapper.like(SysUser::getUser_name,search);
+            wrapper.like(SysUser::getUser_name, search);
         }
         try {
             Page<SysUser> page = sysUserService.page(new Page<>(pageNum, pageSize), wrapper);

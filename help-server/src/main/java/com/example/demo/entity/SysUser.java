@@ -23,7 +23,7 @@ public class SysUser {
     private String salt;
     private String email;
     private String mobile;
-    private Integer status;
+    private Byte status;
     private Long create_user_id;
     private Date create_time;
 
@@ -75,11 +75,11 @@ public class SysUser {
         this.mobile = mobile;
     }
 
-    public Integer getStatus() {
+    public Byte getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(Byte status) {
         this.status = status;
     }
 

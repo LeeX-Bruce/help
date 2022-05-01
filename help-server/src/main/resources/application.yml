@@ -1,5 +1,5 @@
 server:
-  port: 8520
+  port: 2333
   tomcat:
     uri-encoding: UTF-8
 
@@ -19,3 +19,4 @@ spring:
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

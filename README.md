@@ -1,19 +1,14 @@
 # springboot-vue-demo
 
-## Project setup
+## 更新日志
+
+- 2022/05/01	增加任务的相关接口；保存用户和管理员时能自动获取其创建时间；增加mybatis-plus控制台日志；
+
+
+
+## 项目启动
+
 ```
+在 help-server-web 文件夹路径下执行：
 npm install
 ```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

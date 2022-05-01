@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -15,7 +17,8 @@ import java.util.Date;
 @Data
 @TableName("o2o_user")
 public class User {
-    private Integer id;
+    @TableId(type = IdType.AUTO)
+    private Long id;
     private String openid;
     private String nickname;
     private String avatar_url;
@@ -26,11 +29,11 @@ public class User {
     private String address;
     private Date create_time;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
